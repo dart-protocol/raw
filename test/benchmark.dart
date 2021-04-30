@@ -38,7 +38,7 @@ class WriteUtf8Benchmark extends BenchmarkBase {
   static const times = 100;
   static const value =
       "013456789013456789013456789013456789013456789013456789013456789013456789013456789013456789";
-  RawWriter _destination;
+  late RawWriter _destination;
 
   WriteUtf8Benchmark()
       : super(
@@ -68,8 +68,8 @@ class WriteUint8ListBenchmark extends BenchmarkBase {
   final int destinationIndex;
   final int sourceIndex;
   final int length;
-  Uint8List _source;
-  RawWriter _destination;
+  late Uint8List _source;
+  late RawWriter _destination;
 
   WriteUint8ListBenchmark(this.destinationIndex, this.sourceIndex, this.length)
       : super(

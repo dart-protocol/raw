@@ -22,15 +22,9 @@ import 'package:test/test.dart';
 void main() {
   group("RawReader:", () {
     group("numbers:", () {
-      int expected;
-      int length;
-      RawReader reader;
-
-      tearDown(() {
-        expected = null;
-        length = null;
-        reader = null;
-      });
+      late int expected;
+      late int length;
+      late RawReader reader;
 
       /// Converts reader to little-endian.
       void littleEndian(int length) {

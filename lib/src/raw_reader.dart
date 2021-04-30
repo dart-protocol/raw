@@ -81,7 +81,7 @@ class RawReader {
   /// [RawReaderException].
   /// If `maxLength` is non-null and zero is not found within the first
   /// `maxLength` bytes, the method returns `maxLength`.
-  int lengthUntilZero({int maxLength}) {
+  int lengthUntilZero({int? maxLength}) {
     final byteData = this._byteData;
     final start = this.index;
     int end;
@@ -151,7 +151,7 @@ class RawReader {
   ///
   /// If reading fails, the method throws [RawReaderException].
   /// If reading succeeds, the method increments [index] by `length`.
-  ByteData readByteDataViewOrCopy(int length) {
+  ByteData readByteDataViewOrCopy(int? length) {
     if (length == null) {
       length = availableLength;
     } else if (length > _byteData.lengthInBytes - index) {
@@ -330,7 +330,7 @@ class RawReader {
   ///
   /// If reading fails, the method throws [RawReaderException].
   /// If reading succeeds, the method increments [index] by `length`.
-  Uint8List readUint8List(int length) {
+  Uint8List readUint8List(int? length) {
     if (length == null) {
       length = availableLength;
     } else if (length > _byteData.lengthInBytes - index) {
@@ -368,7 +368,7 @@ class RawReader {
   ///
   /// If reading fails, the method throws [RawReaderException].
   /// If reading succeeds, the method increments [index] by `length`.
-  Uint8List readUint8ListViewOrCopy(int length) {
+  Uint8List readUint8ListViewOrCopy(int? length) {
     if (length == null) {
       length = availableLength;
     } else if (length > _byteData.lengthInBytes - index) {
@@ -514,7 +514,7 @@ class RawReader {
     );
   }
 
-  RawReaderException _newException(String message, {int index}) {
+  RawReaderException _newException(String message, {int? index}) {
     index ??= this.index;
     var snippetStart = index - 16;
     if (snippetStart < 0) {
@@ -572,9 +572,9 @@ class RawReaderException implements Exception {
 
   RawReaderException(
     this.message, {
-    this.index,
-    this.snippet,
-    this.snippetIndex,
+    required this.index,
+    required this.snippet,
+    required this.snippetIndex,
   });
 
   @override

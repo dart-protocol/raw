@@ -148,5 +148,5 @@ class RawEquality<T extends RawEncodable> implements Equality<T> {
   }
 
   @override
-  bool isValidKey(Object o) => o is RawEncodable;
+  bool isValidKey(Object? o) => o is RawEncodable;
 }

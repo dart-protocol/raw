@@ -187,17 +187,15 @@ class RawWriter implements Sink<List<int>> {
   }
 
   /// Writes bytes from [ByteData].
-  void writeByteData(ByteData value, [int index = 0, int writtenLength]) {
-    if (writtenLength == null) {
-      writtenLength = value.lengthInBytes - index;
-    }
-    ensureAvailableLength(writtenLength);
+  void writeByteData(ByteData value, [int index = 0, int? writtenLength]) {
+    var calculatedWrittenLength = writtenLength ?? value.lengthInBytes - index;
+    ensureAvailableLength(calculatedWrittenLength);
 
     final byteData = this._byteData;
     var bufferLength = this._length;
-    if (writtenLength >= _minLengthForUin32CopyMethod) {
+    if (calculatedWrittenLength >= _minLengthForUin32CopyMethod) {
       final hostEndian = Endian.host;
-      while (writtenLength >= 4) {
+      while (calculatedWrittenLength >= 4) {
         byteData.setUint32(
           bufferLength,
           value.getUint32(index, hostEndian),
@@ -205,14 +203,14 @@ class RawWriter implements Sink<List<int>> {
         );
         bufferLength += 4;
         index += 4;
-        writtenLength -= 4;
+        calculatedWrittenLength -= 4;
       }
     }
-    while (writtenLength > 0) {
+    while (calculatedWrittenLength > 0) {
       byteData.setUint8(bufferLength, value.getUint8(index));
       bufferLength++;
       index++;
-      writtenLength--;
+      calculatedWrittenLength--;
     }
     this._length = bufferLength;
   }
@@ -221,25 +219,24 @@ class RawWriter implements Sink<List<int>> {
   ///
   /// Before writing, the method calls [ensureAvailableLength], which may throw
   /// [RawWriterException].
-  void writeBytes(List<int> value, [int index = 0, int writtenLength]) {
-    if (writtenLength == null) {
-      writtenLength = value.length - index;
-    }
-    if (writtenLength >= _minLengthForUin32CopyMethod && value is Uint8List) {
+  void writeBytes(List<int> value, [int index = 0, int? writtenLength]) {
+    var calculatedWrittenLength = writtenLength ?? value.length - index;
+    if (calculatedWrittenLength >= _minLengthForUin32CopyMethod &&
+        value is Uint8List) {
       writeByteData(
         ByteData.view(
           value.buffer,
           value.offsetInBytes + index,
-          writtenLength,
+          calculatedWrittenLength,
         ),
       );
       return;
     }
-    ensureAvailableLength(writtenLength);
+    ensureAvailableLength(calculatedWrittenLength);
 
     final buffer = this._byteData;
     var bufferIndex = this._length;
-    for (final end = index + writtenLength; index < end; index++) {
+    for (final end = index + calculatedWrittenLength; index < end; index++) {
       buffer.setUint8(bufferIndex, value[index]);
       bufferIndex++;
     }
@@ -375,7 +372,7 @@ class RawWriter implements Sink<List<int>> {
   ///
   /// Before writing, the method calls [ensureAvailableLength], which may throw
   /// [RawWriterException].
-  int writeUtf8(String value, {int maxLengthInBytes}) {
+  int writeUtf8(String value, {int? maxLengthInBytes}) {
     // Write until the first multi-byte rune.
     final multiByteRuneIndex = _writeUtf8Simple(value);
     if (multiByteRuneIndex < 0) {
@@ -409,7 +406,7 @@ class RawWriter implements Sink<List<int>> {
   ///
   /// Before writing, the method calls [ensureAvailableLength], which may throw
   /// [RawWriterException].
-  int writeUtf8NullEnding(String value, {int maxLengthInBytes}) {
+  int writeUtf8NullEnding(String value, {int? maxLengthInBytes}) {
     for (var i = 0; i < value.length; i++) {
       if (value.codeUnitAt(i) == 0) {
         throw ArgumentError.value(value, "value", "contains null byte");
@@ -552,7 +549,7 @@ class RawWriter implements Sink<List<int>> {
   }
 
   @override
-  void add(List data) {
+  void add(List<int> data) {
     writeBytes(data);
   }
 
